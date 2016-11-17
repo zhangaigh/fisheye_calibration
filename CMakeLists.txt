@@ -1,0 +1,23 @@
+cmake_minimum_required (VERSION 2.8)
+project(fisheye_cali)
+
+# find opencv libratry
+FIND_PACKAGE(OpenCV REQUIRED)
+# find boost library
+find_package(Boost 1.40 REQUIRED COMPONENTS filesystem program_options serialization system thread)
+
+if(Boost_FOUND)
+  include_directories(${Boost_INCLUDE_DIRS})
+  link_directories(${Boost_LIBRARY_DIRS})
+  add_definitions(-DBOOST_ALL_DYN_LINK)
+endif()
+include_directories(${OpenCV_INCLUDE_DIRS})
+add_executable(fisheye_cali
+	calibrate_demo.cpp
+	)
+target_link_libraries(fisheye_cali
+	${OpenCV_LIBS}
+	${Boost_FILESYSTEM_LIBRARY}
+  ${Boost_PROGRAM_OPTIONS_LIBRARY}
+  ${Boost_SYSTEM_LIBRARY}
+	)
