@@ -12,10 +12,21 @@ if(Boost_FOUND)
   add_definitions(-DBOOST_ALL_DYN_LINK)
 endif()
 include_directories(${OpenCV_INCLUDE_DIRS})
-add_executable(fisheye_cali
-	calibrate_demo.cpp
+add_executable(fisheye_mono_calibrate
+	fisheye_mono_camera.cpp
 	)
-target_link_libraries(fisheye_cali
+target_link_libraries(fisheye_mono_calibrate
+	${OpenCV_LIBS}
+	${Boost_FILESYSTEM_LIBRARY}
+  ${Boost_PROGRAM_OPTIONS_LIBRARY}
+  ${Boost_SYSTEM_LIBRARY}
+	)
+
+
+add_executable(fisheye_stereo_calibrate
+	fisheye_stereo_camera.cpp
+	)
+target_link_libraries(fisheye_stereo_calibrate
 	${OpenCV_LIBS}
 	${Boost_FILESYSTEM_LIBRARY}
   ${Boost_PROGRAM_OPTIONS_LIBRARY}

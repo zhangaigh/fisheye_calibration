@@ -1,0 +1,5 @@
+[ 50%] Built target fisheye_cali
+[100%] Building CXX object CMakeFiles/fisheye_stereo_calibrate.dir/fisheye_stereo_camera.cpp.o
+CMakeFiles/fisheye_stereo_calibrate.dir/build.make:54: recipe for target 'CMakeFiles/fisheye_stereo_calibrate.dir/fisheye_stereo_camera.cpp.o' failed
+CMakeFiles/Makefile2:95: recipe for target 'CMakeFiles/fisheye_stereo_calibrate.dir/all' failed
+Makefile:76: recipe for target 'all' failed

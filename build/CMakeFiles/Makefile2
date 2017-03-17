@@ -53,38 +53,73 @@ CMAKE_SOURCE_DIR = /home/bob/source_code/fisheye_calibration_group/fisheye_calib
 CMAKE_BINARY_DIR = /home/bob/source_code/fisheye_calibration_group/fisheye_calibration_bob/build
 
 #=============================================================================
-# Target rules for target CMakeFiles/fisheye_cali.dir
+# Target rules for target CMakeFiles/fisheye_mono_calibrate.dir
 
 # All Build rule for target.
-CMakeFiles/fisheye_cali.dir/all:
-	$(MAKE) -f CMakeFiles/fisheye_cali.dir/build.make CMakeFiles/fisheye_cali.dir/depend
-	$(MAKE) -f CMakeFiles/fisheye_cali.dir/build.make CMakeFiles/fisheye_cali.dir/build
+CMakeFiles/fisheye_mono_calibrate.dir/all:
+	$(MAKE) -f CMakeFiles/fisheye_mono_calibrate.dir/build.make CMakeFiles/fisheye_mono_calibrate.dir/depend
+	$(MAKE) -f CMakeFiles/fisheye_mono_calibrate.dir/build.make CMakeFiles/fisheye_mono_calibrate.dir/build
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/bob/source_code/fisheye_calibration_group/fisheye_calibration_bob/build/CMakeFiles  1
-	@echo "Built target fisheye_cali"
-.PHONY : CMakeFiles/fisheye_cali.dir/all
+	@echo "Built target fisheye_mono_calibrate"
+.PHONY : CMakeFiles/fisheye_mono_calibrate.dir/all
 
 # Include target in all.
-all: CMakeFiles/fisheye_cali.dir/all
+all: CMakeFiles/fisheye_mono_calibrate.dir/all
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/fisheye_cali.dir/rule: cmake_check_build_system
+CMakeFiles/fisheye_mono_calibrate.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/bob/source_code/fisheye_calibration_group/fisheye_calibration_bob/build/CMakeFiles 1
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/fisheye_cali.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/fisheye_mono_calibrate.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/bob/source_code/fisheye_calibration_group/fisheye_calibration_bob/build/CMakeFiles 0
-.PHONY : CMakeFiles/fisheye_cali.dir/rule
+.PHONY : CMakeFiles/fisheye_mono_calibrate.dir/rule
 
 # Convenience name for target.
-fisheye_cali: CMakeFiles/fisheye_cali.dir/rule
-.PHONY : fisheye_cali
+fisheye_mono_calibrate: CMakeFiles/fisheye_mono_calibrate.dir/rule
+.PHONY : fisheye_mono_calibrate
 
 # clean rule for target.
-CMakeFiles/fisheye_cali.dir/clean:
-	$(MAKE) -f CMakeFiles/fisheye_cali.dir/build.make CMakeFiles/fisheye_cali.dir/clean
-.PHONY : CMakeFiles/fisheye_cali.dir/clean
+CMakeFiles/fisheye_mono_calibrate.dir/clean:
+	$(MAKE) -f CMakeFiles/fisheye_mono_calibrate.dir/build.make CMakeFiles/fisheye_mono_calibrate.dir/clean
+.PHONY : CMakeFiles/fisheye_mono_calibrate.dir/clean
 
 # clean rule for target.
-clean: CMakeFiles/fisheye_cali.dir/clean
+clean: CMakeFiles/fisheye_mono_calibrate.dir/clean
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/fisheye_stereo_calibrate.dir
+
+# All Build rule for target.
+CMakeFiles/fisheye_stereo_calibrate.dir/all:
+	$(MAKE) -f CMakeFiles/fisheye_stereo_calibrate.dir/build.make CMakeFiles/fisheye_stereo_calibrate.dir/depend
+	$(MAKE) -f CMakeFiles/fisheye_stereo_calibrate.dir/build.make CMakeFiles/fisheye_stereo_calibrate.dir/build
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/bob/source_code/fisheye_calibration_group/fisheye_calibration_bob/build/CMakeFiles  2
+	@echo "Built target fisheye_stereo_calibrate"
+.PHONY : CMakeFiles/fisheye_stereo_calibrate.dir/all
+
+# Include target in all.
+all: CMakeFiles/fisheye_stereo_calibrate.dir/all
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/fisheye_stereo_calibrate.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/bob/source_code/fisheye_calibration_group/fisheye_calibration_bob/build/CMakeFiles 1
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/fisheye_stereo_calibrate.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/bob/source_code/fisheye_calibration_group/fisheye_calibration_bob/build/CMakeFiles 0
+.PHONY : CMakeFiles/fisheye_stereo_calibrate.dir/rule
+
+# Convenience name for target.
+fisheye_stereo_calibrate: CMakeFiles/fisheye_stereo_calibrate.dir/rule
+.PHONY : fisheye_stereo_calibrate
+
+# clean rule for target.
+CMakeFiles/fisheye_stereo_calibrate.dir/clean:
+	$(MAKE) -f CMakeFiles/fisheye_stereo_calibrate.dir/build.make CMakeFiles/fisheye_stereo_calibrate.dir/clean
+.PHONY : CMakeFiles/fisheye_stereo_calibrate.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/fisheye_stereo_calibrate.dir/clean
 .PHONY : clean
 
 #=============================================================================

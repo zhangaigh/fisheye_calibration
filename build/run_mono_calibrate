@@ -1,0 +1,1 @@
+./fisheye_mono_calibrate -i ../data/poc/images/left -p img -e png -w 8 -h 6 -s 27 -o left_camera.yaml

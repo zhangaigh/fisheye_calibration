@@ -44,5 +44,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/fisheye_cali.dir/DependInfo.cmake"
+  "CMakeFiles/fisheye_mono_calibrate.dir/DependInfo.cmake"
+  "CMakeFiles/fisheye_stereo_calibrate.dir/DependInfo.cmake"
   )

@@ -103,41 +103,78 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named fisheye_cali
+# Target rules for targets named fisheye_mono_calibrate
 
 # Build rule for target.
-fisheye_cali: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 fisheye_cali
-.PHONY : fisheye_cali
+fisheye_mono_calibrate: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 fisheye_mono_calibrate
+.PHONY : fisheye_mono_calibrate
 
 # fast build rule for target.
-fisheye_cali/fast:
-	$(MAKE) -f CMakeFiles/fisheye_cali.dir/build.make CMakeFiles/fisheye_cali.dir/build
-.PHONY : fisheye_cali/fast
+fisheye_mono_calibrate/fast:
+	$(MAKE) -f CMakeFiles/fisheye_mono_calibrate.dir/build.make CMakeFiles/fisheye_mono_calibrate.dir/build
+.PHONY : fisheye_mono_calibrate/fast
 
-calibrate_demo.o: calibrate_demo.cpp.o
-.PHONY : calibrate_demo.o
+#=============================================================================
+# Target rules for targets named fisheye_stereo_calibrate
+
+# Build rule for target.
+fisheye_stereo_calibrate: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 fisheye_stereo_calibrate
+.PHONY : fisheye_stereo_calibrate
+
+# fast build rule for target.
+fisheye_stereo_calibrate/fast:
+	$(MAKE) -f CMakeFiles/fisheye_stereo_calibrate.dir/build.make CMakeFiles/fisheye_stereo_calibrate.dir/build
+.PHONY : fisheye_stereo_calibrate/fast
+
+fisheye_mono_camera.o: fisheye_mono_camera.cpp.o
+.PHONY : fisheye_mono_camera.o
 
 # target to build an object file
-calibrate_demo.cpp.o:
-	$(MAKE) -f CMakeFiles/fisheye_cali.dir/build.make CMakeFiles/fisheye_cali.dir/calibrate_demo.cpp.o
-.PHONY : calibrate_demo.cpp.o
+fisheye_mono_camera.cpp.o:
+	$(MAKE) -f CMakeFiles/fisheye_mono_calibrate.dir/build.make CMakeFiles/fisheye_mono_calibrate.dir/fisheye_mono_camera.cpp.o
+.PHONY : fisheye_mono_camera.cpp.o
 
-calibrate_demo.i: calibrate_demo.cpp.i
-.PHONY : calibrate_demo.i
+fisheye_mono_camera.i: fisheye_mono_camera.cpp.i
+.PHONY : fisheye_mono_camera.i
 
 # target to preprocess a source file
-calibrate_demo.cpp.i:
-	$(MAKE) -f CMakeFiles/fisheye_cali.dir/build.make CMakeFiles/fisheye_cali.dir/calibrate_demo.cpp.i
-.PHONY : calibrate_demo.cpp.i
+fisheye_mono_camera.cpp.i:
+	$(MAKE) -f CMakeFiles/fisheye_mono_calibrate.dir/build.make CMakeFiles/fisheye_mono_calibrate.dir/fisheye_mono_camera.cpp.i
+.PHONY : fisheye_mono_camera.cpp.i
 
-calibrate_demo.s: calibrate_demo.cpp.s
-.PHONY : calibrate_demo.s
+fisheye_mono_camera.s: fisheye_mono_camera.cpp.s
+.PHONY : fisheye_mono_camera.s
 
 # target to generate assembly for a file
-calibrate_demo.cpp.s:
-	$(MAKE) -f CMakeFiles/fisheye_cali.dir/build.make CMakeFiles/fisheye_cali.dir/calibrate_demo.cpp.s
-.PHONY : calibrate_demo.cpp.s
+fisheye_mono_camera.cpp.s:
+	$(MAKE) -f CMakeFiles/fisheye_mono_calibrate.dir/build.make CMakeFiles/fisheye_mono_calibrate.dir/fisheye_mono_camera.cpp.s
+.PHONY : fisheye_mono_camera.cpp.s
+
+fisheye_stereo_camera.o: fisheye_stereo_camera.cpp.o
+.PHONY : fisheye_stereo_camera.o
+
+# target to build an object file
+fisheye_stereo_camera.cpp.o:
+	$(MAKE) -f CMakeFiles/fisheye_stereo_calibrate.dir/build.make CMakeFiles/fisheye_stereo_calibrate.dir/fisheye_stereo_camera.cpp.o
+.PHONY : fisheye_stereo_camera.cpp.o
+
+fisheye_stereo_camera.i: fisheye_stereo_camera.cpp.i
+.PHONY : fisheye_stereo_camera.i
+
+# target to preprocess a source file
+fisheye_stereo_camera.cpp.i:
+	$(MAKE) -f CMakeFiles/fisheye_stereo_calibrate.dir/build.make CMakeFiles/fisheye_stereo_calibrate.dir/fisheye_stereo_camera.cpp.i
+.PHONY : fisheye_stereo_camera.cpp.i
+
+fisheye_stereo_camera.s: fisheye_stereo_camera.cpp.s
+.PHONY : fisheye_stereo_camera.s
+
+# target to generate assembly for a file
+fisheye_stereo_camera.cpp.s:
+	$(MAKE) -f CMakeFiles/fisheye_stereo_calibrate.dir/build.make CMakeFiles/fisheye_stereo_calibrate.dir/fisheye_stereo_camera.cpp.s
+.PHONY : fisheye_stereo_camera.cpp.s
 
 # Help Target
 help:
@@ -146,11 +183,15 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
-	@echo "... fisheye_cali"
+	@echo "... fisheye_mono_calibrate"
+	@echo "... fisheye_stereo_calibrate"
 	@echo "... rebuild_cache"
-	@echo "... calibrate_demo.o"
-	@echo "... calibrate_demo.i"
-	@echo "... calibrate_demo.s"
+	@echo "... fisheye_mono_camera.o"
+	@echo "... fisheye_mono_camera.i"
+	@echo "... fisheye_mono_camera.s"
+	@echo "... fisheye_stereo_camera.o"
+	@echo "... fisheye_stereo_camera.i"
+	@echo "... fisheye_stereo_camera.s"
 .PHONY : help
 
 

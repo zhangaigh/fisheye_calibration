@@ -1,0 +1,2 @@
+./fisheye_stereo_calibrate -i ../data/poc/images/stereo -e png -w 8 -h 6 -s 27 
+
