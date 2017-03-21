@@ -32,3 +32,13 @@ target_link_libraries(fisheye_stereo_calibrate
   ${Boost_PROGRAM_OPTIONS_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}
 	)
+
+add_executable(undistortion_images
+	undistortion_images.cpp
+	)
+target_link_libraries(undistortion_images
+	${OpenCV_LIBS}
+	${Boost_FILESYSTEM_LIBRARY}
+  ${Boost_PROGRAM_OPTIONS_LIBRARY}
+  ${Boost_SYSTEM_LIBRARY}
+	)

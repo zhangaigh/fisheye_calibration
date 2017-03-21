@@ -128,6 +128,19 @@ fisheye_stereo_calibrate/fast:
 	$(MAKE) -f CMakeFiles/fisheye_stereo_calibrate.dir/build.make CMakeFiles/fisheye_stereo_calibrate.dir/build
 .PHONY : fisheye_stereo_calibrate/fast
 
+#=============================================================================
+# Target rules for targets named undistortion_images
+
+# Build rule for target.
+undistortion_images: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 undistortion_images
+.PHONY : undistortion_images
+
+# fast build rule for target.
+undistortion_images/fast:
+	$(MAKE) -f CMakeFiles/undistortion_images.dir/build.make CMakeFiles/undistortion_images.dir/build
+.PHONY : undistortion_images/fast
+
 fisheye_mono_camera.o: fisheye_mono_camera.cpp.o
 .PHONY : fisheye_mono_camera.o
 
@@ -176,6 +189,30 @@ fisheye_stereo_camera.cpp.s:
 	$(MAKE) -f CMakeFiles/fisheye_stereo_calibrate.dir/build.make CMakeFiles/fisheye_stereo_calibrate.dir/fisheye_stereo_camera.cpp.s
 .PHONY : fisheye_stereo_camera.cpp.s
 
+undistortion_images.o: undistortion_images.cpp.o
+.PHONY : undistortion_images.o
+
+# target to build an object file
+undistortion_images.cpp.o:
+	$(MAKE) -f CMakeFiles/undistortion_images.dir/build.make CMakeFiles/undistortion_images.dir/undistortion_images.cpp.o
+.PHONY : undistortion_images.cpp.o
+
+undistortion_images.i: undistortion_images.cpp.i
+.PHONY : undistortion_images.i
+
+# target to preprocess a source file
+undistortion_images.cpp.i:
+	$(MAKE) -f CMakeFiles/undistortion_images.dir/build.make CMakeFiles/undistortion_images.dir/undistortion_images.cpp.i
+.PHONY : undistortion_images.cpp.i
+
+undistortion_images.s: undistortion_images.cpp.s
+.PHONY : undistortion_images.s
+
+# target to generate assembly for a file
+undistortion_images.cpp.s:
+	$(MAKE) -f CMakeFiles/undistortion_images.dir/build.make CMakeFiles/undistortion_images.dir/undistortion_images.cpp.s
+.PHONY : undistortion_images.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -186,12 +223,16 @@ help:
 	@echo "... fisheye_mono_calibrate"
 	@echo "... fisheye_stereo_calibrate"
 	@echo "... rebuild_cache"
+	@echo "... undistortion_images"
 	@echo "... fisheye_mono_camera.o"
 	@echo "... fisheye_mono_camera.i"
 	@echo "... fisheye_mono_camera.s"
 	@echo "... fisheye_stereo_camera.o"
 	@echo "... fisheye_stereo_camera.i"
 	@echo "... fisheye_stereo_camera.s"
+	@echo "... undistortion_images.o"
+	@echo "... undistortion_images.i"
+	@echo "... undistortion_images.s"
 .PHONY : help
 
 
