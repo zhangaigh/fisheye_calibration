@@ -29,12 +29,10 @@ void load_image_points(int board_width,
   {
     imgL = imread(vImageFilenamesL.at(i), -1);
     imgR = imread(vImageFilenamesR.at(i), -1);
-   cout << " Found corners!" << endl;
     bool found1 = false, found2 = false;
 
     found1 = findChessboardCorners(imgL, board_size, corners1);
     found2 = findChessboardCorners(imgR, board_size, corners2);
-    cout << " Found corners!" << endl;
 
     if (found1)
     {
@@ -48,14 +46,12 @@ void load_image_points(int board_width,
       cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
       drawChessboardCorners(imgR, board_size, corners2, found2);
     }
-cout << " Found corners!" << endl;
     vector<cv::Point3d> obj;
     for( int i = 0; i < board_height; ++i )
       for( int j = 0; j < board_width; ++j )
         obj.push_back(Point3d(double( (float)j * square_size ), double( (float)i * square_size ), 0));
 
     if (found1 && found2) {
-      cout << " Found corners!" << endl;
       imagePoints1.push_back(corners1);
       imagePoints2.push_back(corners2);
       object_points.push_back(obj);
@@ -74,6 +70,19 @@ cout << " Found corners!" << endl;
 }
 
 
+void showReclifyImages(const cv::Mat& rectifyImageL, const cv::Mat& rectifyImageR)
+{
+
+    Size sz1 = rectifyImageL.size();
+    Size sz2 = rectifyImageR.size();
+    cv::Mat canvas(sz1.height, sz1.width+sz2.width, CV_8UC1);
+    rectifyImageL.copyTo(canvas(Rect(0, 0, sz1.width, sz1.height)));
+    rectifyImageR.copyTo(canvas(Rect(sz1.width, 0, sz2.width, sz2.height)));
+
+    imshow("rectified image", canvas);
+    waitKey();
+
+}
 
 
 
@@ -82,6 +91,8 @@ int main(int argc, char** argv)
     cv::Size boardSize;
     float squareSize;
     std::string inputDir;
+    std::string leftDir;
+    std::string rightDir;
     std::string outputDir;
     std::string cameraModel;
     std::string cameraNameL, cameraNameR;
@@ -102,7 +113,8 @@ int main(int argc, char** argv)
         ("width,w", boost::program_options::value<int>(&boardSize.width)->default_value(9), "Number of inner corners on the chessboard pattern in x direction")
         ("height,h", boost::program_options::value<int>(&boardSize.height)->default_value(6), "Number of inner corners on the chessboard pattern in y direction")
         ("size,s", boost::program_options::value<float>(&squareSize)->default_value(120.f), "Size of one square in mm")
-        ("input,i", boost::program_options::value<std::string>(&inputDir)->default_value("images"), "Input directory containing chessboard images")
+        ("left,l", boost::program_options::value<std::string>(&leftDir)->default_value("images"), "Input directory containing chessboard images")
+        ("right,r", boost::program_options::value<std::string>(&rightDir)->default_value("images"), "Input directory containing chessboard images")
         ("output,o", boost::program_options::value<std::string>(&outputDir)->default_value("."), "Output directory containing calibration data")
         ("prefix-l", boost::program_options::value<std::string>(&prefixL)->default_value("left"), "Prefix of images from left camera")
         ("leftcalib_file,u", boost::program_options::value<std::string>(&leftcalib_file)->default_value("left_camera.yaml"),"Left camera calibration")
@@ -122,58 +134,56 @@ int main(int argc, char** argv)
     boost::program_options::variables_map vm;
     boost::program_options::store(boost::program_options::command_line_parser(argc, argv).options(desc).positional(pdesc).run(), vm);
     boost::program_options::notify(vm);
-    cout << " Found corners!" << endl;
     if (vm.count("help"))
     {
         std::cout << desc << std::endl;
         return 1;
     }
 
-    if (!boost::filesystem::exists(inputDir) && !boost::filesystem::is_directory(inputDir))
+    if (!boost::filesystem::exists(leftDir) && !boost::filesystem::is_directory(leftDir))
     {
-        std::cerr << "# ERROR: Cannot find input directory " << inputDir << "." << std::endl;
+        std::cerr << "# ERROR: Cannot find left directory " << leftDir << "." << std::endl;
         return 1;
     }
 
-cout << " Found corners!" << endl;
+    if (!boost::filesystem::exists(rightDir) && !boost::filesystem::is_directory(rightDir))
+    {
+        std::cerr << "# ERROR: Cannot find right directory " << rightDir << "." << std::endl;
+        return 1;
+    }
     // look for images in input directory
     std::vector<std::string> imageFilenamesL, imageFilenamesR;
     boost::filesystem::directory_iterator itr;
-    for (boost::filesystem::directory_iterator itr(inputDir); itr != boost::filesystem::directory_iterator(); ++itr)
+    for (boost::filesystem::directory_iterator itr(leftDir); itr != boost::filesystem::directory_iterator(); ++itr)
     {
         if (!boost::filesystem::is_regular_file(itr->status()))
         {
             continue;
         }
+        // check if prefix matches
+        imageFilenamesL.push_back(itr->path().string());
 
-        std::string filename = itr->path().filename().string();
+        if (verbose)
+        {
+            std::cerr << "# INFO: Adding " << imageFilenamesL.back() << std::endl;
+        }
+    }
 
-        // check if file extension matches
-        if (filename.compare(filename.length() - fileExtension.length(), fileExtension.length(), fileExtension) != 0)
+    for (boost::filesystem::directory_iterator itr1(rightDir); itr1 != boost::filesystem::directory_iterator(); ++itr1)
+    {
+        if (!boost::filesystem::is_regular_file(itr1->status()))
         {
             continue;
         }
 
-        // check if prefix matches
-        if (prefixL.empty() || (!prefixL.empty() && (filename.compare(0, prefixL.length(), prefixL) == 0)))
-        {
-            imageFilenamesL.push_back(itr->path().string());
+        imageFilenamesR.push_back(itr1->path().string());
 
-            if (verbose)
-            {
-                std::cerr << "# INFO: Adding " << imageFilenamesL.back() << std::endl;
-            }
-        }
-        if (prefixR.empty() || (!prefixR.empty() && (filename.compare(0, prefixR.length(), prefixR) == 0)))
+        if (verbose)
         {
-            imageFilenamesR.push_back(itr->path().string());
-
-            if (verbose)
-            {
-                std::cerr << "# INFO: Adding " << imageFilenamesR.back() << std::endl;
-            }
+            std::cerr << "# INFO: Adding " << imageFilenamesR.back() << std::endl;
         }
     }
+
 
     if (imageFilenamesL.empty() || imageFilenamesR.empty())
     {
@@ -190,28 +200,6 @@ cout << " Found corners!" << endl;
     bool matchImages = true;
     std::sort(imageFilenamesL.begin(), imageFilenamesL.end());
     std::sort(imageFilenamesR.begin(), imageFilenamesR.end());
-
-    for (size_t i = 0; i < imageFilenamesL.size(); ++i)
-    {
-        std::string filenameL = boost::filesystem::path(imageFilenamesL.at(i)).filename().string();
-        std::string filenameR = boost::filesystem::path(imageFilenamesR.at(i)).filename().string();
-
-        if (filenameL.compare(prefixL.length(),
-                              filenameL.size() - prefixL.length(),
-                              filenameR,
-                              prefixR.length(),
-                              filenameR.size() - prefixR.length()) != 0)
-        {
-            matchImages = false;
-
-            if (verbose)
-            {
-                std::cerr << "# ERROR: Filenames do not match: "
-                          << imageFilenamesL.at(i) << " " << imageFilenamesR.at(i) << std::endl;
-            }
-        }
-    }
-
     if (!matchImages)
     {
         return 1;
@@ -222,21 +210,21 @@ cout << " Found corners!" << endl;
         std::cerr << "# INFO: # images: " << imageFilenamesL.size() << std::endl;
     }
 
-cout << " Found corners!" << endl;
     // load images and detect corner points and the corresponding 3d points
     load_image_points(boardSize.width, boardSize.height, squareSize, imageFilenamesL, imageFilenamesR);
-cout << " Found corners!" << endl;
     cv::FileStorage fsl(leftcalib_file, cv::FileStorage::READ);
     cv::FileStorage fsr(rightcalib_file, cv::FileStorage::READ);
-
       printf("Starting Calibration\n");
       cv::Mat K1, K2, R;
       cv::Vec3d T;
       cv::Mat D1, D2;
       int flag = 0;
-      //flag |= CV_CALIB_USE_INTRINSIC_GUESS;
-
-      //flag |= cv::fisheye::CALIB_FIX_INTRINSIC; 
+      // flag |= cv::fisheye::CALIB_RECOMPUTE_EXTRINSIC;
+       // flag |= cv::fisheye::CALIB_RECOMPUTE_EXTRINSIC;
+  flag |= cv::fisheye::CALIB_CHECK_COND;
+  flag |= cv::fisheye::CALIB_FIX_SKEW;
+  flag |= cv::fisheye::CALIB_USE_INTRINSIC_GUESS;
+  flag |= cv::fisheye::CALIB_FIX_INTRINSIC;
 
       fsl["K"] >> K1;
       fsr["K"] >> K2;
@@ -278,24 +266,41 @@ cout << " Found corners!" << endl;
         cv::Mat imgL = cv::imread(imageFilenamesL.at(i), 0);
         cv::Mat imgR = cv::imread(imageFilenamesR.at(i), 0);
         cv::Mat newK, map1,map2;
-        Mat rview(Size(imgL.cols, imgL.rows), imgL.type());
+        Mat rviewR(Size(imgR.cols, imgR.rows), imgR.type());
         
-        // show undistorted left image 
-        fisheye::estimateNewCameraMatrixForUndistortRectify(K1, D1, Size(imgL.cols, imgL.rows), Matx33d::eye(), newK, 1);
-        fisheye::initUndistortRectifyMap(K1, D1, Matx33d::eye(), newK, Size(imgL.cols, imgL.rows), CV_16SC2, map1, map2);
-        remap(imgL, rview, map1, map2, INTER_LINEAR);
-        cv::namedWindow("undistorted left img", 0);
-        cv::imshow("undistorted left img", rview);
+        int offset = 30;
+        int lineNum = imgR.rows / offset;
 
         // show undistorted right image
-        fisheye::estimateNewCameraMatrixForUndistortRectify(K2, D2, Size(imgL.cols, imgL.rows), Matx33d::eye(), newK, 1);
-        fisheye::initUndistortRectifyMap(K2, D2, Matx33d::eye(), newK, Size(imgL.cols, imgL.rows), CV_16SC2, map1, map2);
-        remap(imgR, rview, map1, map2, INTER_LINEAR);
-         cv::namedWindow("undistorted right img", 0);
-        cv::imshow("undistorted right img", rview);
+        fisheye::estimateNewCameraMatrixForUndistortRectify(K2, D2, Size(imgR.cols, imgR.rows), R2, newK, 1);
+        fisheye::initUndistortRectifyMap(K2, D2, R2, newK, Size(imgR.cols, imgR.rows), CV_16SC2, map1, map2);
+        remap(imgR, rviewR, map1, map2, INTER_LINEAR);
+        for(int i = 0; i < lineNum; i ++)
+        {
+            cv::line(rviewR, cv::Point(0,i*offset), cv::Point(imgR.cols,i*offset), cv::Scalar(255,0,0));
+
+        }
+
+        // cv::namedWindow("undistorted right img", 0);
+        //cv::imshow("undistorted right img", rviewR);
 
 
-        waitKey();
+              // show undistorted left image 
+        cv::Mat map3,map4;
+        Mat rviewL(Size(imgL.cols, imgL.rows), imgL.type());
+        fisheye::estimateNewCameraMatrixForUndistortRectify(K1, D1, Size(imgL.cols, imgL.rows), R1, newK, 1);
+        fisheye::initUndistortRectifyMap(K1, D1, R1, newK, Size(imgL.cols, imgL.rows), CV_16SC2, map3, map4);
+        remap(imgL, rviewL, map3, map4, INTER_LINEAR);
+         for(int i = 0; i < lineNum; i ++)
+        {
+            cv::line(rviewL, cv::Point(0,i*offset), cv::Point(imgL.cols,i*offset), cv::Scalar(255,0,0));
+
+        }
+        //cv::namedWindow("undistorted left img", 0);
+        //cv::imshow("undistorted left img", rviewL);
+
+        showReclifyImages(rviewL, rviewR);
+
     }
 
 

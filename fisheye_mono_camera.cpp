@@ -76,21 +76,6 @@ int main(int argc, char** argv)
 
         std::string filename = itr->path().filename().string();
 
-        // check if prefix matches
-        if (!prefix.empty())
-        {
-            if (filename.compare(0, prefix.length(), prefix) != 0)
-            {
-                continue;
-            }
-        }
-
-        // check if file extension matches
-        if (filename.compare(filename.length() - fileExtension.length(), fileExtension.length(), fileExtension) != 0)
-        {
-            continue;
-        }
-
         imageFilenames.push_back(itr->path().string());
 
         if (verbose)
@@ -174,9 +159,13 @@ int main(int argc, char** argv)
 	//cout << "flag: "<<flag << endl;
 	//calibrate the intrinsic param matrix K and distorted coefficient matrix D 
 	double calibrate_error=fisheye::calibrate(obj_points, img_points, Size(img_width, img_height), K, D, noArray(), noArray(), flag, TermCriteria(3, 20, 1e-6));
-	getOptimalNewCameraMatrix(K, D, Size(img_width, img_height), 1.0, Size(img_width, img_height));
+	//getOptimalNewCameraMatrix(K, D, Size(img_width, img_height), 1.0, Size(img_width, img_height));
 	//adjust the param will produce different K2, which influence the undistort effect
-	fisheye::estimateNewCameraMatrixForUndistortRectify(K, D, Size(img_width, img_height), cv::noArray(), K2, 0.8, Size(img_width, img_height) ,1.0);
+	//fisheye::estimateNewCameraMatrixForUndistortRectify(K, D, Size(img_width, img_height), cv::noArray(), K2, 0.8, Size(img_width, img_height) ,1.0);
+	cv::Mat newK, map1, map2;
+		    fisheye::estimateNewCameraMatrixForUndistortRectify(K, D, Size(img_width, img_height), Matx33d::eye(), newK, 1);
+		    fisheye::initUndistortRectifyMap(K, D, Matx33d::eye(), newK, Size(img_width, img_height), CV_16SC2, map1, map2);
+
 	cout << endl;
 	cout << "K:" << K << endl;
 	cout << "D:" << D << endl;
@@ -204,9 +193,18 @@ int main(int argc, char** argv)
 	{
 		Mat output;// = Mat(Size(img_height, img_width), CV_8UC3);
 		Mat img1 = imread(imageFilenames.at(i), -1);
-		fisheye::undistortImage(img1, output, K, D, K2, Size(img_width, img_height));
+		cv::Mat rview;
+		        remap(img1, rview, map1, map2, INTER_LINEAR);
+		//fisheye::undistortImage(img1, output, K, D, K2, Size(img_width, img_height));
 		namedWindow("undistorted img", 0);
-		imshow("undistorted img", output);
+		imshow("undistorted img", rview);
+
+
+        
+
+
+
+
 		waitKey();
 	}
 

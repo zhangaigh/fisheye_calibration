@@ -1,5 +1,5 @@
 # fisheye_calibration
-
+This calibration tool is based on fisheye calibraton of OPENCV implementation. Currently, monocular and stereo camera calibration can be supported
 # build procedure
 mkdir build
 cd build
