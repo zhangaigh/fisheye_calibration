@@ -1,2 +1,2 @@
-./fisheye_stereo_calibrate -l ~/glassimage/poc1/left -r ~/glassimage/poc1/right -e png -w 8 -h 6 -s 27 --verbose 
+./fisheye_stereo_calibrate -l /home/bob/glassimage/poc2_20170327/left -r /home/bob/glassimage/poc2_20170327/right -e png -w 8 -h 6 -s 27 --verbose 
 

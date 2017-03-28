@@ -212,24 +212,44 @@ int main(int argc, char** argv)
 
     // load images and detect corner points and the corresponding 3d points
     load_image_points(boardSize.width, boardSize.height, squareSize, imageFilenamesL, imageFilenamesR);
+
+
+
+
+
+
     cv::FileStorage fsl(leftcalib_file, cv::FileStorage::READ);
     cv::FileStorage fsr(rightcalib_file, cv::FileStorage::READ);
       printf("Starting Calibration\n");
       cv::Mat K1, K2, R;
       cv::Vec3d T;
       cv::Mat D1, D2;
-      int flag = 0;
+     
+      fsl["K"] >> K1;
+      fsr["K"] >> K2;
+      fsl["D"] >> D1;
+      fsr["D"] >> D2;
+
+  cv::Vec4d D;
+  std::vector<cv::Vec3d> rvecs;
+  std::vector<cv::Vec3d> tvecs;
+  int flag1 = cv::fisheye::CALIB_RECOMPUTE_EXTRINSIC | fisheye::CALIB_FIX_SKEW;
+  cv::fisheye::calibrate(object_points, imagePoints1, imgL.size(), K1,
+    D1, rvecs, tvecs, flag1, TermCriteria(CV_TERMCRIT_ITER + CV_TERMCRIT_EPS, 100, 1e-5));
+  //Rodrigues(rvecs[0], R11);
+
+  cv::fisheye::calibrate(object_points, imagePoints2, imgL.size(), K2,
+    D2, rvecs, tvecs, flag1, TermCriteria(CV_TERMCRIT_ITER + CV_TERMCRIT_EPS, 100, 1e-5));
+  //Rodrigues(rvecs[0], R22);
+
+
+   int flag = 0;
       // flag |= cv::fisheye::CALIB_RECOMPUTE_EXTRINSIC;
        // flag |= cv::fisheye::CALIB_RECOMPUTE_EXTRINSIC;
   flag |= cv::fisheye::CALIB_CHECK_COND;
   flag |= cv::fisheye::CALIB_FIX_SKEW;
   flag |= cv::fisheye::CALIB_USE_INTRINSIC_GUESS;
   flag |= cv::fisheye::CALIB_FIX_INTRINSIC;
-
-      fsl["K"] >> K1;
-      fsr["K"] >> K2;
-      fsl["D"] >> D1;
-      fsr["D"] >> D2;
 
       cv::fisheye::stereoCalibrate(object_points, left_img_points, right_img_points,
           K1, D1, K2, D2, imgL.size(), R, T, flag,
@@ -248,15 +268,54 @@ int main(int argc, char** argv)
       printf("Done Calibration\n");
 
       printf("Starting Rectification\n");
-
       cv::Mat R1, R2, P1, P2, Q;
-      cv::fisheye::stereoRectify(K1, D1, K2, D2, imgL.size(), R, T, R1, R2, P1, P2, 
-    Q, CV_CALIB_ZERO_DISPARITY, imgL.size(), 0.0, 1.1);
+      //cv::Mat P1 = cv::Mat::zeros(3, 4, CV_32FC1);
+      //cv::Mat P2 = cv::Mat::zeros(3, 4, CV_32FC1);
+//#define MVG
+#ifdef MVG
+    vector<Point2f> allimgpt[2];
+    for (int k = 0; k < 2; k ++)
+    {
+      for (int i = 0; i < imageFilenamesL.size(); i++)
+      {
+        if (k == 0)
+        {
+          std::copy(left_img_points[i].begin(), left_img_points[i].end(), back_inserter(allimgpt[k]));
+        }
+        else
+        {
 
+        std::copy(right_img_points[i].begin(), right_img_points[i].end(), back_inserter(allimgpt[k]));
+        }
+
+      }
+    }
+
+    cv::fisheye::undistortPoints(cv::Mat(allimgpt[0]), cv::Mat(allimgpt[0]), K1, D1, cv::Mat(), K1);
+    cv::fisheye::undistortPoints(cv::Mat(allimgpt[1]), cv::Mat(allimgpt[1]), K2, D2, cv::Mat(), K2);
+    cv::Mat F = cv::findFundamentalMat(Mat(allimgpt[0]), Mat(allimgpt[1]), FM_8POINT, 0, 0);
+    cv::Mat H1, H2;
+    cv::stereoRectifyUncalibrated(Mat(allimgpt[0]), Mat(allimgpt[1]), F, imgL.size(), H1, H2, 3);
+    P1 = K1;
+    P2 = K2;
+   
+    R1 = K1.inv()*H1*K1;
+    R2 = K2.inv()*H2*K2; 
+    /*
+    P1 = K1
+    K1.copyTo(P1.rowRange(0,3).colRange(0,3));
+    K2.copyTo(P2.rowRange(0,3).colRange(0,3));
+    //P2.at<double>(0,3) = P1.at<double>(0,0)*T[0] / 1000;
+    P2.at<double>(0,3) = 27.5; 
+    */
+#else
+     cv::fisheye::stereoRectify(K1, D1, K2, D2, imgL.size(), R, T, R1, R2, P1, P2, 
+    Q, CV_CALIB_ZERO_DISPARITY, imgL.size(), 0.0, 1.1);
+#endif
       fs1 << "R1" << R1;
       fs1 << "R2" << R2;
-      fs1 << "P1" << P1;
-      fs1 << "P2" << P2;
+       fs1 << "P1" << P1;
+         fs1 << "P2" << P2;
       fs1 << "Q" << Q;
       cout << "after D1 = "<< endl << " "  << D1 << endl << endl;
       cout << "after R1 = "<< endl << " "  << R1 << endl << endl;
@@ -277,15 +336,16 @@ int main(int argc, char** argv)
         int lineNum = imgR.rows / offset;
 
         // show undistorted right image
-        fisheye::estimateNewCameraMatrixForUndistortRectify(K2, D2, Size(imgR.cols, imgR.rows), R2, newK, 1);
-        fisheye::initUndistortRectifyMap(K2, D2, R2, newK, Size(imgR.cols, imgR.rows), CV_16SC2, map1, map2);
+        //fisheye::estimateNewCameraMatrixForUndistortRectify(K2, D2, Size(imgR.cols, imgR.rows), R2, newK, 1);
+        fisheye::initUndistortRectifyMap(K2, D2, R2, P2, Size(imgR.cols, imgR.rows), CV_16SC2, map1, map2);
         remap(imgR, rviewR, map1, map2, INTER_LINEAR);
+
         for(int i = 0; i < lineNum; i ++)
         {
             cv::line(rviewR, cv::Point(0,i*offset), cv::Point(imgR.cols,i*offset), cv::Scalar(255,0,0));
 
         }
-
+                     
         // cv::namedWindow("undistorted right img", 0);
         //cv::imshow("undistorted right img", rviewR);
 
@@ -293,9 +353,12 @@ int main(int argc, char** argv)
               // show undistorted left image 
         cv::Mat map3,map4;
         Mat rviewL(Size(imgL.cols, imgL.rows), imgL.type());
-        fisheye::estimateNewCameraMatrixForUndistortRectify(K1, D1, Size(imgL.cols, imgL.rows), R1, newK, 1);
-        fisheye::initUndistortRectifyMap(K1, D1, R1, newK, Size(imgL.cols, imgL.rows), CV_16SC2, map3, map4);
+        //fisheye::estimateNewCameraMatrixForUndistortRectify(K1, D1, Size(imgL.cols, imgL.rows), R1, newK, 1);
+        fisheye::initUndistortRectifyMap(K1, D1, R1, P1, Size(imgL.cols, imgL.rows), CV_16SC2, map3, map4);
         remap(imgL, rviewL, map3, map4, INTER_LINEAR);
+
+ 
+     
          for(int i = 0; i < lineNum; i ++)
         {
             cv::line(rviewL, cv::Point(0,i*offset), cv::Point(imgL.cols,i*offset), cv::Scalar(255,0,0));
