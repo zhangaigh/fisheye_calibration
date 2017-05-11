@@ -1,1 +1,1 @@
-./fisheye_mono_calibrate -i ~/source_code/fisheye_calibration_group/camodocal/data/glass1 -p img -e png -w 8 -h 6 -s 27 -o left_camera.yaml
+./fisheye_mono_calibrate -i ~/images/poc023/mono -p img -e jpg -w 8 -h 6 -s 27 -o left_camera.yaml

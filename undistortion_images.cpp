@@ -144,7 +144,7 @@ int main(int argc, char** argv)
         std::cerr << "# INFO: # images: " << imageFilenamesL.size() << std::endl;
     }
       cv::Mat K1, K2, D1, D2, R1, R2, P1, P2, Q;
-      cv::FileStorage fs("poc.yaml", cv::FileStorage::READ);
+      cv::FileStorage fs("poc17.yaml", cv::FileStorage::READ);
      /* fs["K1"] >> K1;
       fs["K2"] >> K2;
       fs["D1"] >> D1;
@@ -177,8 +177,8 @@ int main(int argc, char** argv)
         int lineNum = imgR.rows / offset;
 
         // show undistorted right image
-        fisheye::estimateNewCameraMatrixForUndistortRectify(K2, D2, Size(imgR.cols, imgR.rows), R2, newK, 1);
-        fisheye::initUndistortRectifyMap(K2, D2, R2, newK, Size(imgR.cols, imgR.rows), CV_16SC2, map1, map2);
+        //fisheye::estimateNewCameraMatrixForUndistortRectify(K2, D2, Size(imgR.cols, imgR.rows), R2, newK, 1);
+        fisheye::initUndistortRectifyMap(K2, D2, R2, P2, Size(imgR.cols, imgR.rows), CV_16SC2, map1, map2);
         remap(imgR, rviewR, map1, map2, INTER_LINEAR);
         for(int i = 0; i < lineNum; i ++)
         {
@@ -193,8 +193,8 @@ int main(int argc, char** argv)
               // show undistorted left image 
         cv::Mat map3,map4;
         Mat rviewL(Size(imgL.cols, imgL.rows), imgL.type());
-        fisheye::estimateNewCameraMatrixForUndistortRectify(K1, D1, Size(imgL.cols, imgL.rows), R1, newK, 1);
-        fisheye::initUndistortRectifyMap(K1, D1, R1, newK, Size(imgL.cols, imgL.rows), CV_16SC2, map3, map4);
+        //fisheye::estimateNewCameraMatrixForUndistortRectify(K1, D1, Size(imgL.cols, imgL.rows), R1, newK, 1);
+        fisheye::initUndistortRectifyMap(K1, D1, R1, P1, Size(imgL.cols, imgL.rows), CV_16SC2, map3, map4);
         remap(imgL, rviewL, map3, map4, INTER_LINEAR);
          for(int i = 0; i < lineNum; i ++)
         {

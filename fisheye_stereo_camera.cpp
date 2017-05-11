@@ -256,12 +256,12 @@ int main(int argc, char** argv)
           cv::TermCriteria(3, 12, 0));
 
       cv::FileStorage fs1("stereo_camera.yaml", cv::FileStorage::WRITE);
-      fs1 << "K1" << Mat(K1);
-      fs1 << "K2" << Mat(K2);
-      fs1 << "D1" << D1;
-      fs1 << "D2" << D2;
-      fs1 << "R" << Mat(R);
-      fs1 << "T" << T;
+      fs1 << "LEFT_K" << Mat(K1);
+      fs1 << "RIGHT_K" << Mat(K2);
+      fs1 << "LEFT_D" << D1;
+      fs1 << "RIGHT_D" << D2;
+      //fs1 << "R" << Mat(R);
+      //fs1 << "T" << T;
 
       cout << "before D1 = "<< endl << " "  << D1 << endl << endl;
 
@@ -297,7 +297,7 @@ int main(int argc, char** argv)
     cv::Mat H1, H2;
     cv::stereoRectifyUncalibrated(Mat(allimgpt[0]), Mat(allimgpt[1]), F, imgL.size(), H1, H2, 3);
     P1 = K1;
-    P2 = K2;
+    P2 = K1;
    
     R1 = K1.inv()*H1*K1;
     R2 = K2.inv()*H2*K2; 
@@ -312,14 +312,11 @@ int main(int argc, char** argv)
      cv::fisheye::stereoRectify(K1, D1, K2, D2, imgL.size(), R, T, R1, R2, P1, P2, 
     Q, CV_CALIB_ZERO_DISPARITY, imgL.size(), 0.0, 1.1);
 #endif
-      fs1 << "R1" << R1;
-      fs1 << "R2" << R2;
-       fs1 << "P1" << P1;
-         fs1 << "P2" << P2;
-      fs1 << "Q" << Q;
-      cout << "after D1 = "<< endl << " "  << D1 << endl << endl;
-      cout << "after R1 = "<< endl << " "  << R1 << endl << endl;
-      cout << "after R2 = "<< endl << " "  << R2 << endl << endl;
+      fs1 << "LEFT_R" << R1;
+      fs1 << "RIGHT_R" << R2;
+       fs1 << "LEFT_P" << P1;
+         fs1 << "RIGHT_P" << P2;
+      //fs1 << "Q" << Q;
       printf("Done Rectification\n");
 
     //show the undistorted image
